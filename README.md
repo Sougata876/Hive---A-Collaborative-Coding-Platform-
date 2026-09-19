@@ -1,6 +1,3 @@
-﻿<p align="center">
-  <img src="frontend/public/favicon.svg" width="80" height="80" alt="Hive Logo" />
-</p>
 
 <h1 align="center">🐝 Hive — Real-Time Collaborative Coding Platform</h1>
 
