@@ -44,14 +44,14 @@ Built with a high-performance **Spring Boot 3.5** backend and a reactive **React
 ## 📸 Screenshots
 
 ### 🚀 Landing Page
-> Modern dark-mode interface with interactive real-time editor preview, feature breakdown, and fast auth navigation.
+
 
 ![Hive Landing Page](docs/screenshots/landing.png)
 
 ---
 
 ### 📂 Workspace Dashboard & My Rooms
-> Manage collaborative rooms, view active member counts, generate instantaneous invite codes, or join existing rooms.
+
 
 ![Hive Dashboard](docs/screenshots/dashboard.png)
 
@@ -274,12 +274,4 @@ Run backend unit and integration test suite:
 ```bash
 cd backend
 .\mvnw.cmd test
-```
 
-> **55+ tests** covering authentication, token rotation, room permissions, chat persistence, STOMP interceptors, and Yjs relay synchronization.
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
