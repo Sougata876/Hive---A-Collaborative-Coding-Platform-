@@ -17,7 +17,6 @@
   <a href="https://microsoft.github.io/monaco-editor/"><img src="https://img.shields.io/badge/Monaco%20Editor-VS%20Code%20Core-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Monaco Editor" /></a>
   <a href="https://yjs.dev"><img src="https://img.shields.io/badge/Yjs-CRDT%20Sync-E34F26?style=for-the-badge&logo=javascript&logoColor=white" alt="Yjs" /></a>
   <a href="https://www.mysql.com"><img src="https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" /></a>
 </p>
 
 <p align="center">
