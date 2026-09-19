@@ -1,73 +1,182 @@
-# Hive
+﻿<p align="center">
+  <img src="frontend/public/favicon.svg" width="80" height="80" alt="Hive Logo" />
+</p>
 
-**A real-time collaborative workspace for developers.**
+<h1 align="center">🐝 Hive — Real-Time Collaborative Coding Platform</h1>
 
-Hive is a real-time collaborative coding platform. Multiple developers can edit code together with conflict-free CRDT synchronization and live cursors, communicate in a room chat, and save code snapshots — with role-based permissions (Owner, Editor, Viewer) enforced across REST endpoints and WebSocket channels.
+<p align="center">
+  <b>A modern, low-latency collaborative workspace where developers write, debug, and build code together in real-time.</b>
+</p>
+
+<p align="center">
+  <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot" /></a>
+  <a href="https://www.java.com"><img src="https://img.shields.io/badge/Java-21+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java" /></a>
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" /></a>
+  <a href="https://vitejs.dev"><img src="https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" /></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind%20CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" /></a>
+  <a href="https://microsoft.github.io/monaco-editor/"><img src="https://img.shields.io/badge/Monaco%20Editor-VS%20Code%20Core-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Monaco Editor" /></a>
+  <a href="https://yjs.dev"><img src="https://img.shields.io/badge/Yjs-CRDT%20Sync-E34F26?style=for-the-badge&logo=javascript&logoColor=white" alt="Yjs" /></a>
+  <a href="https://www.mysql.com"><img src="https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" /></a>
+</p>
+
+<p align="center">
+  <a href="#-overview">Overview</a> •
+  <a href="#-key-features">Key Features</a> •
+  <a href="#-screenshots">Screenshots</a> •
+  <a href="#-system-architecture">System Architecture</a> •
+  <a href="#-tech-stack">Tech Stack</a> •
+  <a href="#-getting-started">Getting Started</a> •
+  <a href="#-api--websocket-reference">API Reference</a> •
+  <a href="#-extending-language-support">Extensibility</a>
+</p>
 
 ---
 
-## Features
+## 🌟 Overview
 
-| Area | What it does |
-| --- | --- |
-| **Auth** | Register / login, JWT access tokens, database-backed revocable refresh tokens with rotation, BCrypt hashing |
-| **Rooms** | Create a room (creator becomes `OWNER`), join by invite code, list your rooms, soft delete |
-| **Roles** | `OWNER` manages members and the room; `EDITOR` edits, runs and chats; `VIEWER` watches and chats |
-| **Collaborative editor** | Monaco Editor + Yjs CRDT relayed over STOMP, with a peer sync handshake so late joiners converge |
-| **Presence** | Live per-room member list and remote cursors, synchronized across multiple tabs per user |
-| **Chat** | Per-room real-time chat over WebSocket, persisted to MySQL, cursor-paginated history |
-| **Save / load** | Manual save plus debounced autosave into versioned `CodeSnapshot` records; latest loads on join |
-| **Extensible Execution** | Pluggable `LanguageExecutor` strategy pattern designed to support multiple programming languages |
+**Hive** is a full-stack real-time collaborative development environment designed for distributed teams, pair programming, and coding interviews.
+
+Built with a high-performance **Spring Boot 3.5** backend and a reactive **React 19 + Vite** frontend, Hive ensures conflict-free concurrent editing via **Yjs CRDTs (Conflict-free Replicated Data Types)** over WebSocket (STOMP), displays live remote cursors with user awareness, persists room conversations and versioned code snapshots in **MySQL**, and enforces strict role-based access control (**Owner**, **Editor**, **Viewer**) on every request and WebSocket frame.
 
 ---
 
-## Architecture
+## 📸 Screenshots
+
+### 🚀 Landing Page
+> Modern dark-mode interface with interactive real-time editor preview, feature breakdown, and fast auth navigation.
+
+![Hive Landing Page](docs/screenshots/landing.png)
+
+---
+
+### 📂 Workspace Dashboard & My Rooms
+> Manage collaborative rooms, view active member counts, generate instantaneous invite codes, or join existing rooms.
+
+![Hive Dashboard](docs/screenshots/dashboard.png)
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+| :--- | :--- |
+| **⚡ Conflict-Free Live Editing** | Powered by **Yjs CRDT** integrated with **Monaco Editor**. Multiple peers can type simultaneously on the same file with zero race conditions, merge conflicts, or overwritten characters. |
+| **👥 Multi-Cursor Presence** | Real-time awareness displays remote user cursor positions, user selection highlights, and active online member indicators across tabs and sessions. |
+| **💬 In-Room Live Chat** | Full-duplex WebSocket chat per room with message persistence in MySQL and paginated history retrieval. |
+| **🛡️ Role-Based Access Control** | Three distinct roles: `OWNER` (full room management), `EDITOR` (edit, save, chat), and `VIEWER` (read-only observer + chat). Permissions are validated on every HTTP call and STOMP message channel. |
+| **💾 Automated & Manual Snapshots** | Manual snapshots and debounced autosave back up your project into versioned `code_snapshots` rows, automatically loading the latest state on join. |
+| **🔐 Production-Grade Security** | Stateless JWT authentication, BCrypt password hashing (strength 12), and database-backed SHA-256 hashed refresh tokens with automatic single-use rotation and revocation. |
+| **🌐 Multi-Language Extensibility** | Designed with a strategy design pattern (`LanguageExecutor`) so new language runners and file extensions can be added without altering core architecture. |
+
+---
+
+## 🏗️ System Architecture
 
 ```
-frontend/  React 19 + Vite + Tailwind v4 + Monaco + Yjs        (:5173)
-backend/   Spring Boot 3.5 + Spring Security + STOMP + JPA     (:8080)
-MySQL      MySQL 8.0+                                          (:3306)
+                                  +---------------------------------------+
+                                  |            CLIENT BROWSER             |
+                                  |    (React 19 + Monaco + Yjs + STOMP)  |
+                                  +---------------------------------------+
+                                           |                     |
+                              HTTP / REST  |                     |  WebSocket (STOMP)
+                             [Port: 8080]  |                     |  [/ws]
+                                           v                     v
++---------------------------------------------------------------------------------------------------+
+|                                      HIVE BACKEND (Spring Boot 3.5)                               |
+|                                                                                                   |
+|   +--------------------------+    +---------------------------+    +--------------------------+   |
+|   |    Security Filter Chain |    | STOMP Inbound Interceptor |    |  Presence & Chat Handler |   |
+|   |   (JWT Auth, CORS, RBAC) |    |  (Token Validation & Auth)|    |  (User tracking, Pub/Sub)|   |
+|   +--------------------------+    +---------------------------+    +--------------------------+   |
+|                |                               |                                |                 |
+|                v                               v                                v                 |
+|   +-------------------------------------------------------------------------------------------+   |
+|   |                            Service Layer (Room, Chat, Code, Auth)                         |   |
+|   +-------------------------------------------------------------------------------------------+   |
+|                |                                                                |                 |
+|                v                                                                v                 |
+|   +--------------------------+                                     +--------------------------+   |
+|   |  Spring Data JPA / Flyway|                                     |    LanguageExecutor      |   |
+|   |   (Entities & Repos)     |                                     |  (Extensible Runner)     |   |
+|   +--------------------------+                                     +--------------------------+   |
++----------------|----------------------------------------------------------------------------------+
+                 |
+                 v
++---------------------------------+
+|         MySQL DATABASE          |
+|  (Users, Rooms, Snapshots, Chat)|
++---------------------------------+
 ```
 
-**Security boundaries worth calling out:**
+---
 
-- The STOMP `CONNECT` frame is authenticated by its own JWT interceptor; the HTTP handshake alone is never trusted. Every `SEND` and `SUBSCRIBE` is then re-authorized against the room's role table.
-- Message handlers re-check permissions themselves rather than relying on the interceptor alone.
-- Refresh tokens are stored only as SHA-256 hashes and are rotated (and revoked) on every use.
-- No secrets are hardcoded: credentials and configuration are externalized via environment variables.
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: React 19 (Hooks, Context API)
+- **Bundler & Tooling**: Vite 6, Rolldown code-splitting
+- **Editor**: Monaco Editor (`@monaco-editor/react`)
+- **Real-Time Sync**: Yjs (`yjs`, `y-monaco`, `y-protocols`)
+- **WebSocket Client**: `@stomp/stompjs`, `sockjs-client`
+- **Styling**: Tailwind CSS v4, JetBrains Mono font
+
+### Backend
+- **Framework**: Spring Boot 3.5.16
+- **Language**: Java 21+
+- **Security**: Spring Security 6 (Stateless JWT, BCrypt, Token Rotation)
+- **Real-Time Messaging**: Spring WebSocket (`@EnableWebSocketMessageBroker`, STOMP over SockJS)
+- **Data Persistence**: Spring Data JPA / Hibernate 6
+- **Database Migrations**: Flyway
+- **Database**: MySQL 8.0+
 
 ---
 
-## Prerequisites
+## 🚀 Getting Started
 
-- **Java 21+**
-- **Node.js 20+**
-- **MySQL 8.0+**
+### Prerequisites
+Make sure you have the following installed on your machine:
+- **Java 21+** (`java -version`)
+- **Node.js 20+** & **npm** (`node -v`, `npm -v`)
+- **MySQL 8.0+** running on port `3306`
 
 ---
 
-## Running the stack locally
+### Step 1: Database Setup
 
-### 1. Database Setup
+Ensure your local MySQL service is running. Log in to MySQL and create the database and user:
 
-Ensure MySQL is running on `localhost:3306` with database `hive`. Flyway database migrations run automatically on startup.
+```sql
+CREATE DATABASE IF NOT EXISTS hive;
+CREATE USER IF NOT EXISTS 'hive'@'localhost' IDENTIFIED BY 'hive_local';
+GRANT ALL PRIVILEGES ON hive.* TO 'hive'@'localhost';
+FLUSH PRIVILEGES;
+```
 
-Default credentials configured in `backend/src/main/resources/application.yml`:
-- Database: `hive`
-- Username: `hive` (or override via `DB_USERNAME`)
-- Password: `hive_local` (or override via `DB_PASSWORD`)
+> **Note**: Database schema migrations are executed automatically by Flyway upon backend startup.
 
-### 2. Start the backend
+---
+
+### Step 2: Configure and Run Backend
+
+Navigate to the `backend` directory and start the Spring Boot application:
 
 ```bash
 cd backend
+# On Windows:
+.\mvnw.cmd spring-boot:run
+
+# On Linux/macOS:
 ./mvnw spring-boot:run
 ```
-*(On Windows: `.\mvnw.cmd spring-boot:run` or run `HiveApplication` directly from your IDE)*
 
-The API comes up on http://localhost:8080.
+The backend server will start on **`http://localhost:8080`**.
 
-### 3. Start the frontend
+---
+
+### Step 3: Configure and Run Frontend
+
+In a new terminal window, navigate to the `frontend` directory:
 
 ```bash
 cd frontend
@@ -75,128 +184,102 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173, register an account, and create a room.
-
-To try collaboration, open the room, copy the invite code from **Invite**, then join from a second
-browser profile or an incognito window with a different account.
+The frontend client will be available at **`http://localhost:5173`**.
 
 ---
 
-## Configuration
+## 📡 API & WebSocket Reference
 
-Every value below is read from the environment, with a local-development default in
-`backend/src/main/resources/application.yml`.
+### REST Endpoints
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `DB_URL` | `jdbc:mysql://localhost:3306/hive?...` | JDBC URL |
-| `DB_USERNAME` / `DB_PASSWORD` | `hive` / `hive_local` | Database credentials |
-| `JWT_SECRET` | *(empty — must be set)* | HMAC signing key, ≥32 bytes |
-| `JWT_ISSUER` | `hive-api` | Token issuer claim |
-| `JWT_ACCESS_TOKEN_TTL` | `15m` | Access-token lifetime |
-| `JWT_REFRESH_TOKEN_TTL` | `30d` | Refresh-token lifetime |
-| `WS_ALLOWED_ORIGINS` | `http://localhost:5173` | Allowed WebSocket origins |
-| `DOCKER_JAVA_IMAGE` | `openjdk:21-slim` | Sandbox image |
-| `DOCKER_COMMAND` | `docker` | Docker CLI path |
-| `EXECUTION_TIMEOUT` | `10s` | Hard wall-clock limit per run |
-| `EXECUTION_MEMORY_LIMIT` | `128m` | Container memory cap |
-| `EXECUTION_CPU_LIMIT` | `0.5` | Container CPU cap |
-| `EXECUTION_MAX_CONCURRENT` | `2` | Containers running at once, server-wide |
-| `EXECUTION_RATE_LIMIT_PER_MINUTE` | `10` | Runs per room per minute |
+#### Authentication
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new account (`username`, `email`, `password`) | Public |
+| `POST` | `/api/auth/login` | Login with username/email and receive JWT token pair | Public |
+| `POST` | `/api/auth/refresh` | Exchange refresh token for a fresh access token | Public |
 
-The frontend reads `VITE_API_BASE_URL` (default `http://localhost:8080`).
+#### User Profile
+| Method | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/users/me` | Fetch currently authenticated user profile | Bearer JWT |
+| `PUT` | `/api/users/me` | Update username, email, or avatar URL | Bearer JWT |
 
----
+#### Collaborative Rooms
+| Method | Endpoint | Description | Min Role |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/rooms` | Create a new room (creator becomes `OWNER`) | User |
+| `POST` | `/api/rooms/join` | Join an existing room via invite code | User |
+| `GET` | `/api/rooms` | List all rooms user is a member of | User |
+| `GET` | `/api/rooms/{id}` | Get room details | Member |
+| `GET` | `/api/rooms/{id}/members` | List members and their assigned roles | Member |
+| `PATCH` | `/api/rooms/{id}/members/{userId}/role` | Update user role (`OWNER`, `EDITOR`, `VIEWER`) | Owner |
+| `DELETE` | `/api/rooms/{id}/members/me` | Leave room | Member |
+| `DELETE` | `/api/rooms/{id}` | Delete room and revoke access | Owner |
 
-## API reference
-
-### Auth
-| Method | Path | Notes |
-| --- | --- | --- |
-| `POST` | `/api/auth/register` | `{username, email, password}` → token pair |
-| `POST` | `/api/auth/login` | `{identifier, password}` — identifier is username or email |
-| `POST` | `/api/auth/refresh` | `{refreshToken}` → new pair; the old token is revoked |
-
-### Users
-| Method | Path | Notes |
-| --- | --- | --- |
-| `GET` | `/api/users/me` | Current profile |
-| `PUT` | `/api/users/me` | Update username / email / avatar |
-
-### Rooms
-| Method | Path | Role |
-| --- | --- | --- |
-| `POST` | `/api/rooms` | any |
-| `POST` | `/api/rooms/join` | any |
-| `GET` | `/api/rooms` | any |
-| `GET` | `/api/rooms/{id}` | member |
-| `GET` | `/api/rooms/{id}/members` | member |
-| `PATCH` | `/api/rooms/{id}/members/{userId}/role` | owner |
-| `DELETE` | `/api/rooms/{id}/members/{userId}` | owner |
-| `DELETE` | `/api/rooms/{id}/members/me` | member (leave) |
-| `DELETE` | `/api/rooms/{id}` | owner |
-
-### Chat, code and execution
-| Method | Path | Role |
-| --- | --- | --- |
-| `GET` | `/api/rooms/{id}/messages?size=&beforeId=` | member |
-| `GET` | `/api/rooms/{id}/snapshots/latest` | member |
-| `POST` | `/api/rooms/{id}/snapshots` | editor |
-| `POST` | `/api/rooms/{id}/executions` | editor |
-
-### WebSocket (STOMP over SockJS at `/ws`)
-
-Authenticate by sending `Authorization: Bearer <accessToken>` as a **CONNECT frame header**.
-
-| Destination | Direction | Role |
-| --- | --- | --- |
-| `/app/room/{id}/edit` | publish | editor |
-| `/app/room/{id}/sync` | publish | member |
-| `/app/room/{id}/chat` | publish | member |
-| `/app/room/{id}/presence` | publish | member |
-| `/topic/room/{id}/code` | subscribe | member |
-| `/topic/room/{id}/chat` | subscribe | member |
-| `/topic/room/{id}/presence` | subscribe | member |
+#### Chat & Code Snapshots
+| Method | Endpoint | Description | Min Role |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/rooms/{id}/messages` | Get paginated chat history | Member |
+| `GET` | `/api/rooms/{id}/snapshots/latest` | Retrieve latest saved snapshot | Member |
+| `POST` | `/api/rooms/{id}/snapshots` | Save a new versioned snapshot | Editor |
 
 ---
 
-## Tests
+### WebSocket Channels (STOMP over SockJS at `/ws`)
+
+Authenticate by passing `Authorization: Bearer <accessToken>` in the STOMP `CONNECT` frame.
+
+| Destination | Type | Role | Purpose |
+| :--- | :--- | :--- | :--- |
+| `/app/room/{id}/edit` | Publish | Editor | Broadcast Yjs binary edit delta |
+| `/app/room/{id}/sync` | Publish | Member | Request / reply peer synchronization handshake |
+| `/app/room/{id}/chat` | Publish | Member | Send chat message to room |
+| `/app/room/{id}/presence` | Publish | Member | Publish cursor coordinate and awareness state |
+| `/topic/room/{id}/code` | Subscribe | Member | Receive live CRDT document updates |
+| `/topic/room/{id}/chat` | Subscribe | Member | Receive incoming real-time chat messages |
+| `/topic/room/{id}/presence` | Subscribe | Member | Receive peer online status and cursor movements |
+
+---
+
+## 🧩 Extending Language Support
+
+Hive is architected to make adding new programming languages simple. The execution subsystem uses a strategy pattern:
+
+1. **Enum Definition**: Add the language constant to `ProgrammingLanguage.java` (`JAVA`, `PYTHON`, `JAVASCRIPT`, `CPP`, etc.).
+2. **Strategy Implementation**: Implement the `LanguageExecutor` interface:
+   ```java
+   @Component
+   public class PythonExecutor implements LanguageExecutor {
+       @Override
+       public ProgrammingLanguage language() {
+           return ProgrammingLanguage.PYTHON;
+       }
+
+       @Override
+       public ExecutionResult execute(String sourceCode) {
+           // Compile or run in sandbox
+       }
+   }
+   ```
+3. `CodeExecutionService` automatically discovers the new bean via Spring dependency injection.
+4. The frontend editor dynamically adapts file tabs (`main.py`, `index.js`, `Main.java`) and Monaco syntax highlighting.
+
+---
+
+## 🧪 Testing
+
+Run backend unit and integration test suite:
 
 ```bash
-cd backend && ./mvnw test
+cd backend
+.\mvnw.cmd test
 ```
 
-Covers auth and token rotation, room permissions, chat persistence and pagination, snapshot
-versioning, the STOMP authentication and authorization interceptors, presence tracking, and the
-execution rate limiter. The Docker sandbox tests are guarded by `@EnabledIf("dockerAvailable")` and
-skip automatically when no Docker daemon is reachable; start Docker to exercise the real resource
-limits.
+> **55+ tests** covering authentication, token rotation, room permissions, chat persistence, STOMP interceptors, and Yjs relay synchronization.
 
 ---
 
-## Project layout
+## 📄 License
 
-```
-backend/src/main/java/com/hive/
-  auth/       registration, login, refresh-token rotation
-  user/       profile endpoints
-  room/       rooms, members, RoomPermissionService
-  chat/       chat persistence, REST history, STOMP handler
-  code/       Yjs relay, snapshot save/load
-  execution/  LanguageExecutor strategy + Docker sandbox runner
-  websocket/  STOMP config, JWT + authorization interceptors, presence
-  security/   JWT service, filter, SecurityConfig
-frontend/src/
-  pages/      Landing, Login, Register, Dashboard, Room, Profile
-  components/ CollaborativeEditor, ChatPanel, MembersPanel, OutputPanel, ui
-  hooks/      useAuth, useRoomSocket, usePresence, useChat, useCodeSnapshot, useExecution
-  lib/        api client, STOMP client, Yjs provider
-```
-
----
-
-## Adding another language
-
-`LanguageExecutor` is a strategy interface — implement it, register the bean, and add the enum
-constant to `ProgrammingLanguage`. `CodeExecutionService` resolves the executor by language, so no
-existing code needs to change.
+This project is licensed under the [MIT License](LICENSE).
