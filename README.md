@@ -263,11 +263,4 @@ Hive is architected to make adding new programming languages simple. The executi
 
 ---
 
-## 🧪 Testing
-
-Run backend unit and integration test suite:
-
-```bash
-cd backend
-.\mvnw.cmd test
 
