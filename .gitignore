@@ -1,0 +1,16 @@
+.env
+.idea/
+.vscode/
+*.iml
+.DS_Store
+.claude/
+.claude
+
+# Build artifacts
+backend/target/
+target/
+frontend/node_modules/
+node_modules/
+frontend/dist/
+dist/
+*.log

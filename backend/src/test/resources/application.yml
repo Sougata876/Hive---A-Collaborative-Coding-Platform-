@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:hive;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+hive:
+  jwt:
+    issuer: hive-api-test
+    secret: test-only-secret-that-is-longer-than-thirty-two-bytes
+    access-token-ttl: 15m
+    refresh-token-ttl: 30d

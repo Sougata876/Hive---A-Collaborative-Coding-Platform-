@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: Hive
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/hive?createDatabaseIfNotExist=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:2005}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+server:
+  port: ${SERVER_PORT:8080}
+
+hive:
+  jwt:
+    issuer: ${JWT_ISSUER:hive-api}
+    secret: ${JWT_SECRET:0DlIpDXGBJiwaRBGs1IPHYbwo3QbYobPotDsjW2ibew}
+    access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:15m}
+    refresh-token-ttl: ${JWT_REFRESH_TOKEN_TTL:30d}
+  websocket:
+    allowed-origins: ${WS_ALLOWED_ORIGINS:http://localhost:5173}
+  execution:
+    docker-image: ${DOCKER_JAVA_IMAGE:openjdk:21-slim}
+    docker-command: ${DOCKER_COMMAND:docker}
+    timeout: ${EXECUTION_TIMEOUT:10s}
+    memory-limit: ${EXECUTION_MEMORY_LIMIT:128m}
+    cpu-limit: ${EXECUTION_CPU_LIMIT:0.5}
+    max-source-length: ${EXECUTION_MAX_SOURCE_LENGTH:100000}
+    max-output-length: ${EXECUTION_MAX_OUTPUT_LENGTH:64000}
+    max-concurrent-executions: ${EXECUTION_MAX_CONCURRENT:2}
+    per-room-rate-limit-per-minute: ${EXECUTION_RATE_LIMIT_PER_MINUTE:10}

@@ -1,0 +1,32 @@
+{
+  "name": "hive-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "4.7.0",
+    "@stomp/stompjs": "7.3.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "7.18.4",
+    "sockjs-client": "1.6.1",
+    "y-monaco": "0.1.6",
+    "y-protocols": "1.0.7",
+    "yjs": "13.6.32"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "oxlint": "^1.79.0",
+    "tailwindcss": "4.3.3",
+    "vite": "^8.2.2"
+  }
+}
